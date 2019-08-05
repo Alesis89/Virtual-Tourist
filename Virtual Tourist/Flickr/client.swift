@@ -50,11 +50,12 @@ func getFlickrPhotosForPin(inLat: Double, inLon: Double, completion: @escaping (
                 
                 for dictionary in photoArray{
                     if let imageURLString = dictionary["url_m"] as? String{
-                        
-                        let imageURL = URL(string: imageURLString)
-                        if let imageData = try? Data(contentsOf: imageURL!) {
-                            pinImages.append(PinImage(pinImage: UIImage(data: imageData)!))
-                        }
+                        pinImages.append(PinImage(pinImage: imageURLString))
+//                        let imageURL = URL(string: imageURLString)
+//                        if let imageData = try? Data(contentsOf: imageURL!) {
+////                            pinImages.append(PinImage(pinImage: UIImage(data: imageData)!))
+//                            pinImages.append(PinImage(pinImage: imageURLString))
+                        //}
                     }
                 }
             }

@@ -50,7 +50,7 @@ class PinDetailsViewController: UICollectionViewController, MKMapViewDelegate{
                         self.btnNewCollection.isEnabled = true
                     }
                     //Not sure if this is correct.  Is it really storing the images in coredata to the correct pin?
-                    
+
 //                    let photos = Photo(context: self.dataController.viewContext)
 //                    for photo in pinImages{
 //                        photos.photo = photo.pinImage.jpegData(compressionQuality: 1.0)
@@ -82,6 +82,7 @@ class PinDetailsViewController: UICollectionViewController, MKMapViewDelegate{
         let region = MKCoordinateRegion(center: annotation.coordinate, span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))
         mapView.setRegion(region, animated: true)
         mapView.addAnnotation(annotation)
+
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -114,13 +115,7 @@ class PinDetailsViewController: UICollectionViewController, MKMapViewDelegate{
     }
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        var cellCount = 21
-        
-        if pinImages.count > 0 {
-            cellCount = pinImages.count
-        }
-        
-        return cellCount
+        return pinImages.count
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -131,21 +126,22 @@ class PinDetailsViewController: UICollectionViewController, MKMapViewDelegate{
         activity.hidesWhenStopped = true
         activity.center = CGPoint(x: cell.frame.size.width/2, y: cell.frame.size.height/2)
         
-        
         cell.cellPhoto?.image = UIImage(named: "VirtualTourist_512")
         cell.addSubview(activity)
         activity.startAnimating()
-    
-        if pinImages.count > 0 {
-            
-            cell.cellPhoto?.image = pinImages[indexPath.row].pinImage
-            activity.stopAnimating()
-            
-        }
         
+        let imageURL = URL(string: pinImages[indexPath.row].pinImage)
+        DispatchQueue.global(qos: .background).async {
+            if let imageData = try? Data(contentsOf: imageURL!) {
+                DispatchQueue.main.async {
+                    cell.cellPhoto?.image = UIImage(data: imageData)
+                    activity.stopAnimating()
+                }
+            }
+        }
         return cell
     }
-    
+
     @IBAction func getNextPage(_ sender: Any) {
         startPage = startPage + 1
         mainDelegate.page = startPage

@@ -12,6 +12,6 @@ import UIKit
 var pinImages = [PinImage]()
 
 struct PinImage{
-    var pinImage: UIImage
+    var pinImage: String
 }
 
